@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Undangan Pernikahan - Fajar & Senja</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts: Sacramento for headings, Work Sans for body -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Work+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Animate On Scroll (AOS) Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* Custom CSS */
+        :root {
+            --primary-color: #6c5b7b; /* Warna ungu lembut */
+            --secondary-color: #c06c84; /* Warna pink tua */
+            --text-color: #355c7d; /* Warna biru tua */
+            --bg-light: #f8f7f4;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background-color: var(--bg-light);
+            /* Sembunyikan scrollbar pada awalnya */
+            overflow-y: hidden; 
+        }
+
+        .font-sacramento {
+            font-family: 'Sacramento', cursive;
+        }
+
+        /* --- Cover Section --- */
+        .cover {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1515934751635-481eff048362?q=80&w=1974&auto=format&fit=crop'); /* Ganti dengan URL gambar cover Anda */
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 9999;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s;
+        }
+
+        .cover.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .cover h1 {
+            font-size: 4rem;
+        }
+
+        /* --- Main Content Styling --- */
+        #main-content {
+            display: none; /* Disembunyikan pada awalnya */
+        }
+        
+        /* --- Hero Section --- */
+        .hero {
+            min-height: 100vh;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/Background.jpg'); /* Ganti dengan URL gambar hero Anda */
+            background-size: cover;
+            background-position: center;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+        }
+
+        /* --- Countdown Timer --- */
+        .timer-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .timer-box span {
+            display: block;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        /* --- General Section Styling --- */
+        .section-title {
+            color: var(--primary-color);
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .card-custom {
+            border: none;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .card-custom .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+            padding: 15px;
+        }
+
+        .card-custom .card-header .bi {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        /* --- Music Button --- */
+        .music-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            font-size: 24px;
+            z-index: 1000;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* --- AI Feature Styling --- */
+        .btn-outline-primary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        #honeymoonResult, #songResult {
+            border-left: 5px solid var(--secondary-color);
+            text-align: left;
+            transition: all 0.5s ease;
+        }
+        
+        #ucapanList .card {
+            transition: transform 0.3s ease;
+        }
+        #ucapanList .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* --- Quiz Styling --- */
+        #quizOptions .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #quizResult {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            color: white;
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cover Section -->
+    <section class="cover" id="cover">
+        <div>
+            <p class="mb-2">The Wedding Of</p>
+            <h1 class="font-sacramento">Obito & Sakura</h1>
+            <p class="mt-4">Kepada Bapak/Ibu/Saudara/i,</p>
+            <p><strong>Tamu Undangan</strong></p>
+            <button class="btn btn-light mt-3" id="open-invitation">
+                <i class="bi bi-envelope-open-heart-fill me-2"></i>Buka Undangan
+            </button>
+        </div>
+    </section>
+
+    <!-- Main Content (Initially Hidden) -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div>
+                <p data-aos="fade-up">Kami akan menikah</p>
+                <h1 class="font-sacramento my-3" data-aos="zoom-in">Obito & Sakura </h1>
+                <p data-aos="fade-up" data-aos-delay="200">Menghitung hari menuju momen bahagia kami:</p>
+                <div id="countdown" class="d-flex justify-content-center gap-3 mt-4" data-aos="fade-up" data-aos-delay="400">
+                    <div class="timer-box"><span id="days">0</span> Hari</div>
+                    <div class="timer-box"><span id="hours">0</span> Jam</div>
+                    <div class="timer-box"><span id="minutes">0</span> Menit</div>
+                    <div class="timer-box"><span id="seconds">0</span> Detik</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bride & Groom Section -->
+        <section id="mempelai" class="py-5 text-center">
+            <div class="container">
+                <h2 class="font-sacramento section-title" data-aos="fade-up">Mempelai</h2>
+                <p class="text-muted" data-aos="fade-up" data-aos-delay="100">"Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya diantaramu rasa kasih dan sayang." <br>(QS. Ar-Rum: 21)</p>
+                <div class="row mt-5 justify-content-center">
+                    <div class="col-md-5 mb-4" data-aos="fade-right">
+                                                                                                                                        <!-- untuk mengubah ukuran object-fit: cover; -->
+                        <img src="images/foto-obito.jpg" class="img-fluid rounded-circle mb-3 shadow" style="width: 200px; height: 200px; object-fit: cover;"> 
+                        <h3 class="font-sacramento" style="font-size: 2.5rem; color: var(--primary-color);">Fajar Hidayat</h3>
+                        <p>Putra dari Bapak Subagyo & Ibu Wati</p>
+                    </div>
+                    <div class="col-md-5 mb-4" data-aos="fade-left">
+                        <img src="images/sakura.jpg" alt="Foto Mempelai Wanita" class="img-fluid rounded-circle mb-3 shadow" style="width: 200px; height: 200px;">
+                        <h3 class="font-sacramento" style="font-size: 2.5rem; color: var(--primary-color);">Sakura</h3>
+                        <p>Putri dari Bapak Hartono & Ibu Sri</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Acara Section -->
+        <section id="acara" class="py-5 text-center" style="background-color: var(--bg-light);">
+            <div class="container">
+                <h2 class="font-sacramento section-title" data-aos="fade-up">Detail Acara</h2>
+                <div class="row mt-4 justify-content-center">
+                    <div class="col-md-5 mb-4" data-aos="zoom-in-up">
+                        <div class="card card-custom h-100">
+                           <div class="card-header"><h3 class="font-sacramento mb-0"><i class="bi bi-gem"></i>Akad Nikah</h3></div>
+                            <div class="card-body">
+                                <p><strong>Sabtu, 20 Desember 2025</strong></p>
+                                <p><strong>09:00 WIB - Selesai</strong></p>
+                                <p class="mb-0">Masjid Istiqlal, Jakarta Pusat</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-4" data-aos="zoom-in-up" data-aos-delay="200">
+                        <div class="card card-custom h-100">
+                            <div class="card-header"><h3 class="font-sacramento mb-0"><i class="bi bi-cup-straw"></i>Resepsi</h3></div>
+                            <div class="card-body">
+                                <p><strong>Sabtu, 20 Desember 2025</strong></p>
+                                <p><strong>19:00 WIB - Selesai</strong></p>
+                                <p class="mb-0">Gedung Balai Kartini, Jakarta</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Google Maps -->
+                <div class="mt-4" data-aos="fade-up">
+                    <h3 class="font-sacramento" style="color: var(--primary-color); font-size: 2rem;">Lokasi Acara</h3>
+                    <div class="map-responsive ratio ratio-16x9 mt-3 shadow" style="border-radius: 15px; overflow: hidden;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.219525930871!2d106.98582547200442!3d-6.234767647226189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e698c3c401b0b57%3A0x9bd795687902e21b!2sCevest%20BBPLK%20Bekasi!5e0!3m2!1sid!2sid!4v1756929357830!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP Section -->
+        <section id="rsvp" class="py-5 text-center">
+            <div class="container">
+                <h2 class="font-sacramento section-title" data-aos="fade-up">Konfirmasi Kehadiran</h2>
+                <p data-aos="fade-up" data-aos-delay="100">Mohon konfirmasikan kehadiran Anda agar kami dapat mempersiapkan acara dengan lebih baik.</p>
+                <form id="rsvpForm" class="mt-4" style="max-width: 500px; margin: auto;" data-aos="fade-up" data-aos-delay="200">
+                    <div class="mb-3">
+                        <input id="namaInput" type="text" class="form-control" placeholder="Nama Anda" required>
+                    </div>
+                    <div class="mb-3">
+                        <select class="form-select" required>
+                            <option selected disabled value="">Apakah Anda akan hadir?</option>
+                            <option value="hadir">Ya, saya akan hadir</option>
+                            <option value="tidak">Maaf, saya tidak bisa hadir</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <textarea id="ucapanText" class="form-control" rows="4" placeholder="Tuliskan ucapan & doa Anda"></textarea>
+                    </div>
+                     <button type="button" id="generateWishBtn" class="btn btn-outline-primary mb-3 w-100">otomatis</button>
+                    <button type="submit" class="btn text-white w-100" style="background-color: var(--primary-color);">Kirim Konfirmasi & Ucapan</button>
+                </form>
+                <div id="formSuccessMessage" class="mt-3 alert alert-success" style="display: none; max-width: 500px; margin: auto;">Terima kasih! Ucapan Anda telah tersimpan.</div>
+            </div>
+        </section>
+
+        <!-- Guestbook Section -->
+        <section id="buku-tamu" class="py-5" style="background-color: var(--bg-light);">
+            <div class="container">
+                <h2 class="font-sacramento section-title text-center" data-aos="fade-up">Buku Tamu Digital</h2>
+                <div id="ucapanList" class="mt-4 mx-auto" style="max-width: 700px; max-height: 50vh; overflow-y: auto; padding: 1rem; border-radius: 15px; background-color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                    <!-- Wishes will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Gift Section -->
+      <!-- ... kode lainnya ... -->
+
+    <!-- Gift Section -->
+    <section id="gift" class="py-5 text-center">
+        <div class="container">
+            <h2 class="font-sacramento section-title" data-aos="fade-up">Kirim Hadiah</h2>
+            <p data-aos="fade-up" data-aos-delay="100">Doa restu Anda adalah hadiah terindah bagi kami. Namun, jika Anda ingin memberikan tanda kasih, kami telah menyediakan fitur di bawah ini untuk memudahkan Anda.</p>
+            
+            <!-- Gunakan class 'col-lg-8' agar tidak terlalu lebar di layar besar -->
+            <div class="col-lg-8 mx-auto mt-4" data-aos="zoom-in">
+                <div class="card card-custom">
+                    <div class="card-header">
+                        <h3 class="font-sacramento mb-0"><i class="bi bi-gift-fill me-2"></i>Amplop Digital</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Baris Rekening Pertama -->
+                        <div class="bank-account d-flex flex-column flex-sm-row align-items-center justify-content-between p-3 mb-3" style="background-color: #f8f9fa; border-radius: 10px;">
+                            <div class="d-flex align-items-center mb-2 mb-sm-0">
+                                <img src="BANK/logo Bca.jpg" alt="Logo BCA" style="width: 70px;" class="me-3">
+                                <div>
+                                    <p class="fw-bold mb-0" id="rekening1">5771259155</p>
+                                    <small class="text-muted">Obito</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm text-white" onclick="salinRekening('rekening1')" style="background-color: var(--primary-color);">
+                                <i class="bi bi-copy me-1"></i> Salin Rekening
+                            </button>
+                        </div>
+
+                        <!-- Baris Rekening Kedua (Contoh e-wallet) -->
+                        <div class="bank-account d-flex flex-column flex-sm-row align-items-center justify-content-between p-3" style="background-color: #f8f9fa; border-radius: 10px;">
+                            <div class="d-flex align-items-center mb-2 mb-sm-0">
+                                <img src="BANK/logo Bca.jpg" alt="Logo GoPay" style="width: 70px;" class="me-3">
+                                <div>
+                                    <p class="fw-bold mb-0" id="rekening2">5771245</p>
+                                    <small class="text-muted">Sakura</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm text-white" onclick="salinRekening('rekening2')" style="background-color: var(--primary-color);">
+                                <i class="bi bi-copy me-1"></i> Salin Rekening
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- ... kode lainnya ... -->
+
+
+
+        <!-- Honeymoon Idea Section -->
+        <section id="honeymoon" class="py-5 text-center" style="background-color: var(--bg-light);">
+            <div class="container">
+                <h2 class="font-sacramento section-title" data-aos="fade-up">Bantu Kami Memilih Bulan Madu!</h2>
+                <p data-aos="fade-up" data-aos-delay="100">Kami masih bingung memilih destinasi bulan madu. Beri kami ide yang seru!</p>
+                <button id="generateHoneymoonBtn" class="btn text-white mt-3" style="background-color: var(--secondary-color);" data-aos="zoom-in">
+                    <i class="bi bi-magic me-2"></i> Beri Kami Ide!
+                </button>
+                <div id="honeymoonResult" class="mt-4 p-4 rounded shadow-sm" style="background-color: #fff; display: none; max-width: 600px; margin: auto;">
+                    <!-- Hasil dari AI akan ditampilkan di sini -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Song Suggestion Section -->
+        <section id="playlist" class="py-5 text-center">
+            <div class="container">
+                <h2 class="font-sacramento section-title" data-aos="fade-up">Sumbang Lagu untuk Pesta Kami</h2>
+                <p data-aos="fade-up" data-aos-delay="100">Punya ide lagu yang cocok untuk hari bahagia kami? Minta bantuan Anda untuk mencari inspirasi!</p>
+                <div class="col-md-8 mx-auto" data-aos="fade-up" data-aos-delay="200">
+                    <div class="input-group mb-3">
+                        <input type="text" id="songThemeInput" class="form-control" placeholder="Contoh: Pop romantis, lagu dansa, atau rock 90an">
+                        <button id="generateSongBtn" class="btn text-white" style="background-color: var(--primary-color);">
+                            <i class="bi bi-music-note-list me-2"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="songResult" class="mt-4 p-4 rounded shadow-sm" style="background-color: #fff; display: none; max-width: 600px; margin: auto;">
+                    <!-- Hasil dari AI akan ditampilkan di sini -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Wedding Quiz Section -->
+        <section id="quiz" class="py-5 text-center" style="background-color: var(--bg-light);">
+            <div class="container">
+                <h2 class="font-sacramento section-title" data-aos="fade-up">✨ Kuis Pernikahan </h2>
+                <p data-aos="fade-up" data-aos-delay="100">Seberapa baik Anda mengenal kami? Jawab pertanyaan dengan baik!</p>
+                <div class="col-md-8 mx-auto mt-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <p id="quizQuestion" class="lead">Klik tombol di bawah untuk memulai kuis!</p>
+                            <div id="quizOptions" class="mt-3">
+                                <!-- Opsi jawaban akan muncul di sini -->
+                            </div>
+                            <p id="quizResult" class="mt-3"></p>
+                        </div>
+                        <div class="card-footer">
+                             <button id="generateQuizBtn" class="btn text-white" style="background-color: var(--secondary-color);">
+                                <i class="bi bi-patch-question-fill me-2"></i>Mulai Kuis / Pertanyaan Berikutnya
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <footer class="text-center py-4" style="background-color: var(--primary-color); color: white;">
+            <p class="mb-0">Terima kasih atas perhatian dan doa restu Anda.</p>
+            <p class="font-sacramento" style="font-size: 2rem;">Obito & Sakura</p>
+        </footer>
+
+    </main>
+    
+    <!-- YouTube Player Container (Hidden) -->
+    <div id="youtube-player" style="display: none;"></div>
+    
+    <button id="music-toggle" class="music-button"><i class="bi bi-music-note-beamed"></i></button>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-light mt-3"></p>
+    </div>
+
+    <!-- Bootstrap & AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- YouTube Iframe API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Inisialisasi AOS (Animate on Scroll)
+            AOS.init({
+                duration: 1000, // Durasi animasi
+                once: true,      // Animasi hanya berjalan sekali
+            });
+
+            const openButton = document.getElementById('open-invitation');
+            const cover = document.getElementById('cover');
+            const mainContent = document.getElementById('main-content');
+            const musicToggleButton = document.getElementById('music-toggle');
+
+            // --- Gemini API & Guestbook & Quiz Integration ---
+            const rsvpForm = document.getElementById('rsvpForm');
+            const namaInput = document.getElementById('namaInput');
+            const ucapanText = document.getElementById('ucapanText');
+            const ucapanList = document.getElementById('ucapanList');
+            const formSuccessMessage = document.getElementById('formSuccessMessage');
+            const generateWishBtn = document.getElementById('generateWishBtn');
+            const generateHoneymoonBtn = document.getElementById('generateHoneymoonBtn');
+            const honeymoonResult = document.getElementById('honeymoonResult');
+            const generateSongBtn = document.getElementById('generateSongBtn');
+            const songThemeInput = document.getElementById('songThemeInput');
+            const songResult = document.getElementById('songResult');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const generateQuizBtn = document.getElementById('generateQuizBtn');
+            const quizQuestion = document.getElementById('quizQuestion');
+            const quizOptions = document.getElementById('quizOptions');
+            const quizResult = document.getElementById('quizResult');
+
+            const apiKey = "AIzaSyBWPcxp_pfmm0fxr165Za2g9Nau-Wkb9iM"; // API key will be provided by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const localStorageKey = 'weddingWishes_FajarSenja';
+
+            // Helper function to show/hide loading overlay
+            const showLoading = (show) => {
+                loadingOverlay.style.display = show ? 'flex' : 'none';
+            };
+
+            // Generic function to call Gemini API with exponential backoff
+            async function callGemini(prompt, retries = 3, delay = 1000) {
+                showLoading(true);
+                try {
+                    const payload = { contents: [{ parts: [{ text: prompt }] }] };
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && retries > 0) {
+                            console.warn("API rate limit hit. Retrying...");
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return callGemini(prompt, retries - 1, delay * 2);
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    return text || "Maaf, AI tidak memberikan jawaban. Coba lagi.";
+                } catch (error) {
+                    console.error("Error calling Gemini API:", error);
+                    return "Maaf, terjadi kesalahan saat menghubungi AI.";
+                } finally {
+                    showLoading(false);
+                }
+            }
+            
+            // Function to load and display wishes from localStorage
+            function loadWishes() {
+                const wishes = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+                ucapanList.innerHTML = ''; // Clear existing list
+
+                if (wishes.length === 0) {
+                    ucapanList.innerHTML = '<p class="text-center text-muted">Belum ada ucapan. Jadilah yang pertama!</p>';
+                    return;
+                }
+                
+                // Display newest wishes first
+                wishes.reverse().forEach(wish => {
+                    const wishElement = document.createElement('div');
+                    wishElement.classList.add('card', 'mb-3', 'shadow-sm');
+                    wishElement.innerHTML = `
+                        <div class="card-body">
+                            <h6 class="card-title" style="color: var(--primary-color);">${wish.name}</h6>
+                            <p class="card-text">${wish.wish}</p>
+                            <small class="text-muted">${new Date(wish.timestamp).toLocaleString('id-ID')}</small>
+                        </div>
+                    `;
+                    ucapanList.appendChild(wishElement);
+                });
+            }
+
+            // Function to handle form submission
+            function handleRsvpSubmit(event) {
+                event.preventDefault();
+                
+                const name = namaInput.value.trim();
+                const wishText = ucapanText.value.trim();
+
+                if (!name || !wishText) {
+                    alert('Nama dan ucapan tidak boleh kosong.');
+                    return;
+                }
+                
+                const newWish = {
+                    name: name,
+                    wish: wishText,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const wishes = JSON.parse(localStorage.getItem(localStorageKey)) || [];
+                wishes.push(newWish);
+                localStorage.setItem(localStorageKey, JSON.stringify(wishes));
+                
+                formSuccessMessage.style.display = 'block';
+                setTimeout(() => { formSuccessMessage.style.display = 'none'; }, 4000);
+
+                rsvpForm.reset();
+                loadWishes();
+            }
+
+            // Function to generate a wedding wish
+            async function generateWish() {
+                const prompt = "Tuliskan sebuah ucapan pernikahan yang singkat (sekitar 2-3 kalimat), puitis, dan menyentuh hati untuk pasangan bernama Obito dan Sakura. Ucapan harus terdengar tulus dan mendoakan kebahagiaan, cinta abadi, dan petualangan bersama. Jangan gunakan emoji.";
+                ucapanText.placeholder = "sedang merangkai kata...";
+                const wish = await callGemini(prompt);
+                ucapanText.value = wish.trim();
+                ucapanText.placeholder = "Tuliskan ucapan & doa Anda";
+            }
+
+            // Function to generate a honeymoon idea
+            async function generateHoneymoonIdea() {
+                const prompt = "Berikan satu ide destinasi bulan madu yang romantis dan unik di Indonesia untuk pasangan yang menyukai alam dan petualangan. Sajikan dalam format: **Nama Tempat**\nDeskripsi singkat (2-3 kalimat) mengapa tempat itu spesial dan cocok untuk mereka.";
+                const idea = await callGemini(prompt);
+                const formattedIdea = idea.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                honeymoonResult.innerHTML = formattedIdea;
+                honeymoonResult.style.display = 'block';
+            }
+
+            // Function to generate a song suggestion
+            async function generateSongSuggestion() {
+                const theme = songThemeInput.value.trim();
+                if (!theme) {
+                    songThemeInput.placeholder = "Tolong masukkan tema lagu terlebih dahulu!";
+                    return;
+                }
+                const prompt = `Based on the theme "${theme}", suggest one Indonesian or international song title and its artist that would be perfect for the wedding celebration of Fajar and Senja. Format the response strictly as: **Song Title** by **Artist Name**. For example: **Sempurna** by **Andra and The Backbone**. Provide only the song title and artist, nothing else.`;
+                const suggestion = await callGemini(prompt);
+                const formattedSuggestion = suggestion.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                songResult.innerHTML = `<p class="mb-0">${formattedSuggestion}</p>`;
+                songResult.style.display = 'block';
+            }
+
+            // Function to generate a quiz question
+            async function generateQuiz() {
+                quizResult.textContent = '';
+                const prompt = `Buat satu pertanyaan kuis pilihan ganda yang menyenangkan tentang pasangan fiksi Obito dan Sakura. Berikan 4 pilihan jawaban, di mana salah satunya benar. Topik bisa tentang kencan pertama mereka, hobi bersama, atau makanan favorit. Berikan jawaban yang benar di baris terakhir dengan format "Jawaban: [teks jawaban yang benar]".
+
+Contoh format:
+Di mana Obito dan Sakura pertama kali bertemu?
+A. Di perpustakaan kota
+B. Di puncak Gunung Rinjani
+C. Di sebuah konser musik indie
+D. Di kedai kopi senja
+Jawaban: Di kedai kopi senja`;
+                
+                const quizData = await callGemini(prompt);
+                
+                try {
+                    const lines = quizData.split('\n').filter(line => line.trim() !== '');
+                    const question = lines[0];
+                    const options = lines.slice(1, 5);
+                    const answerLine = lines.find(line => line.toLowerCase().startsWith('jawaban:'));
+                    const correctAnswer = answerLine.split(':')[1].trim();
+
+                    quizQuestion.textContent = question;
+                    quizOptions.innerHTML = '';
+
+                    options.forEach(optionText => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.className = 'btn btn-outline-primary';
+                        // Clean up option text (e.g., remove "A. ")
+                        button.textContent = optionText.substring(optionText.indexOf('.') + 1).trim(); 
+                        button.onclick = () => checkAnswer(button.textContent, correctAnswer);
+                        quizOptions.appendChild(button);
+                    });
+                } catch (error) {
+                    console.error("Failed to parse quiz data:", error);
+                    quizQuestion.textContent = "Gagal memuat kuis, silakan coba lagi.";
+                    quizOptions.innerHTML = '';
+                }
+            }
+            
+            function checkAnswer(selectedAnswer, correctAnswer) {
+                if (selectedAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                    quizResult.textContent = 'Jawaban Anda Benar! 🎉';
+                    quizResult.className = 'mt-3 text-success';
+                } else {
+                    quizResult.textContent = `Kurang tepat. Jawaban yang benar adalah "${correctAnswer}".`;
+                    quizResult.className = 'mt-3 text-danger';
+                }
+                // Disable all buttons after an answer
+                document.querySelectorAll('#quizOptions .btn').forEach(btn => {
+                    btn.disabled = true;
+                });
+            }
+
+            // Add event listeners
+            rsvpForm.addEventListener('submit', handleRsvpSubmit);
+            generateWishBtn.addEventListener('click', generateWish);
+            generateHoneymoonBtn.addEventListener('click', generateHoneymoonIdea);
+            generateSongBtn.addEventListener('click', generateSongSuggestion);
+            generateQuizBtn.addEventListener('click', generateQuiz);
+            
+            // --- YouTube Player Integration ---
+            var player;
+            window.onYouTubeIframeAPIReady = function() {
+                player = new YT.Player('youtube-player', {
+                    height: '0',
+                    width: '0',
+                    // Ganti 'Ptk_1Dc2iPY' dengan ID video YouTube pilihan Anda
+                    videoId: '9ZR4G6CqqQA', 
+                    playerVars: {
+                        'autoplay': 0, // Autoplay dinonaktifkan, akan diputar saat buka undangan
+                        'controls': 0,
+                        'loop': 1,
+                        'playlist': '9ZR4G6CqqQA' // ID video harus diulang di sini agar loop berfungsi
+                    }
+                });
+            }
+
+            // Fungsi untuk membuka undangan
+            openButton.addEventListener('click', function() {
+                cover.classList.add('hidden');
+                mainContent.style.display = 'block';
+                document.body.style.overflowY = 'auto'; 
+
+                if (player && typeof player.playVideo === 'function') {
+                    player.playVideo();
+                }
+                musicToggleButton.innerHTML = '<i class="bi bi-pause-circle-fill"></i>'; 
+            });
+
+            // Fungsi untuk toggle musik
+            musicToggleButton.addEventListener('click', function() {
+                if (!player || typeof player.getPlayerState !== 'function') return;
+
+                const playerState = player.getPlayerState();
+                // 1 = Sedang Diputar (YT.PlayerState.PLAYING)
+                if (playerState === 1) {
+                    player.pauseVideo();
+                    musicToggleButton.innerHTML = '<i class="bi bi-play-circle-fill"></i>';
+                } else {
+                    player.playVideo();
+                    musicToggleButton.innerHTML = '<i class="bi bi-pause-circle-fill"></i>';
+                }
+            });
+
+            // Countdown Timer
+            const weddingDate = new Date('2025-12-20T09:00:00').getTime();
+            const countdownFunction = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = weddingDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').innerText = days;
+                document.getElementById('hours').innerText = hours;
+                document.getElementById('minutes').innerText = minutes;
+                document.getElementById('seconds').innerText = seconds;
+
+                if (distance < 0) {
+                    clearInterval(countdownFunction);
+                    document.getElementById('countdown').innerHTML = "Acara Telah Berlangsung";
+                }
+            }, 1000);
+            
+            // Load wishes when the page is ready
+            loadWishes();
+        });
+    </script>
+</body>
+</html>
+
